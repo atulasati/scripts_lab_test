@@ -27,8 +27,8 @@ class Calculator():
             if temp2 == '.':
                 if temp2 in temp:
                     return
-            # self.current = temp + temp2
-        self.display(self.current)
+            self.current = temp2
+        self.display(temp2)
 
 #Fonction pour la touche Égale
     def calc_total(self):
@@ -47,6 +47,7 @@ class Calculator():
             text_box.delete(0,END)
         text_box.insert(END, value)
         text_box.configure(state="disabled")
+        self.current = text_box.get()
 
         #Vous devez écrire le code pour afficher l'information dans le textbox.
 
@@ -57,19 +58,38 @@ class Calculator():
         #Une division par 0 devrait montrer un message d'erreur "Can't Divide by 0."
         self.new_num = True
         self.op_pending = False
+        self.total = eval(self.current)
+        text_box.configure(state="normal")
+        text_box.delete(0, END)
+        text_box.configure(state="disabled")
         self.display(self.total)
 
 #Fonction pour storer l'opération
-    def operation(self, op): 
-        self.current = float(self.current)
-        if self.op_pending:
+    def operation(self, op):
+        if op == "=":
+            self.total = eval(self.current)
+            text_box.configure(state="normal")
+            text_box.delete(0, END)
+            text_box.configure(state="disabled")
+            self.display(self.total)
+            return 
+        if self.current[-1] in ['-','+','/','*']:
+            return
+        if op in self.current:
             self.do_sum()
-        elif not self.eq:
-            self.total = self.current
-        self.new_num = True
-        self.op_pending = True
-        self.op = op
-        self.eq = False
+
+        self.display(op)
+        return
+  #       self.current = float(self.current)
+  #       if self.op_pending:
+  #           self.do_sum()
+  #       elif not self.eq:
+  #           self.total = self.current
+  #       self.new_num = True
+  #       self.op_pending = True
+  #       self.op = op
+  #       self.eq = False
+        # # self.display(self.current)
 
 #Fonction pour canceller (Touche A/C)
     def all_cancel(self):
@@ -96,6 +116,11 @@ class Calculator():
 #Fonction pour changer les nombres en positifs et négatifs
     def sign(self):
         self.eq = False
+        self.total = eval(self.current)
+        text_box.configure(state="normal")
+        text_box.delete(0, END)
+        text_box.configure(state="disabled")
+        self.display(self.total * -1)
         #Vous devez écrire le code pour changer le signe du nombre entré.
 
 #Déclaration de l'application "Calculator"
@@ -169,11 +194,11 @@ bttn_pc.grid(row = 1, column = 2, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 
 bttn_divide = Button(frame, text = "÷", height = 3, width = 5)
-bttn_divide["command"] = lambda: calc.calc_percent()
+bttn_divide["command"] = lambda: calc.operation('÷')
 bttn_divide.grid(row = 1, column = 3, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 bttn_mul = Button(frame, text = "×", height = 3, width = 5)
-bttn_mul["command"] = lambda: calc.operation('/')
+bttn_mul["command"] = lambda: calc.operation('*')
 bttn_mul.grid(row = 2, column = 3, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 bttn_sub = Button(frame, text = "-", height = 3, width = 5)

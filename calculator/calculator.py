@@ -13,35 +13,48 @@ class Calculator():
         self.op = "" #Opération à effectuer
         self.eq = False #Lorsque la touche égale est appuyée.
 
+    def flush_text_box(self):
+        text_box.configure(state="normal")
+        text_box.delete(0, END)
+        text_box.configure(state="disabled")
+
 #Fonction pour afficher les chiffres à l'écran
     def num_press(self, num):
-        self.eq = False
-        temp = text_box.get()
-        print("numpress:", num)
+        if self.eq == True:
+            self.all_cancel()
+            self.eq = False
+
+        if self.current == "0":
+            if num == 0:
+                return
+            else:
+                if num != '.':
+                    self.all_cancel()
+
+        temp = text_box.get()        
         temp2 = str(num)      
         if self.new_num:
-            print("temp2:", temp2)
             self.current = temp2
-            self.new_num = False
+            if temp2 == '.':
+                self.new_num = False
         else:
             if temp2 == '.':
                 if temp2 in temp:
                     return
             self.current = temp2
         self.display(temp2)
+        self.op = ""
 
 #Fonction pour la touche Égale
     def calc_total(self):
+        if (not self.current) or (self.op):
+            return 
         self.eq = True
-        self.current = float(self.current)
-        if self.op_pending == True:
-            self.do_sum()
-        else:
-            self.total = float(text_box.get())
+        self.do_sum() #set total
+        self.display(self.total)
 
 #Fonction pour afficher à l'écran
     def display(self, value):
-        print (value)
         text_box.configure(state="normal")
         if text_box.get() == ERROR_MESSAGE_1:
             text_box.delete(0,END)
@@ -58,45 +71,37 @@ class Calculator():
         #Une division par 0 devrait montrer un message d'erreur "Can't Divide by 0."
         self.new_num = True
         self.op_pending = False
-        self.total = eval(self.current)
-        text_box.configure(state="normal")
-        text_box.delete(0, END)
-        text_box.configure(state="disabled")
-        self.display(self.total)
+        try:
+           self.total = eval(self.current)
+        except ZeroDivisionError as error:
+            showerror("Title", ERROR_MESSAGE_2)
+        self.flush_text_box()        
 
 #Fonction pour storer l'opération
     def operation(self, op):
-        if op == "=":
-            self.total = eval(self.current)
-            text_box.configure(state="normal")
-            text_box.delete(0, END)
-            text_box.configure(state="disabled")
-            self.display(self.total)
+        if (not self.current):
             return 
+
+        self.op_pending = True
+        self.new_num = True
+        self.eq = False
+
         if self.current[-1] in ['-','+','/','*']:
-            return
+            temp = text_box.get()[:-1] 
+            self.all_cancel()
+            self.display(temp)
+            
         if op in self.current:
             self.do_sum()
+            self.display(self.total)
 
+        self.op = op
         self.display(op)
-        return
-  #       self.current = float(self.current)
-  #       if self.op_pending:
-  #           self.do_sum()
-  #       elif not self.eq:
-  #           self.total = self.current
-  #       self.new_num = True
-  #       self.op_pending = True
-  #       self.op = op
-  #       self.eq = False
-        # # self.display(self.current)
 
 #Fonction pour canceller (Touche A/C)
     def all_cancel(self):
         #You must write the code to reset the different variables.
-        text_box.configure(state="normal")
-        text_box.delete(0, END)
-        text_box.configure(state="disabled")
+        self.flush_text_box()
         
         self.total = 0 #Retient or the total of operations is rendered
         self.current = "" #Contains the content of the display screen
@@ -104,22 +109,25 @@ class Calculator():
         self.op_pending = False #If there is a pending operation
         self.op = "" # Operation to perform
         self.eq = False #When the equal key is pressed.
-        pass
         #Vous devez écrire le code pour réinitialiser les différentes variables.
         
 #Fonction pour les pourcentages
     def calc_percent(self):
-        self.current = float(self.current)
+        if (not self.current) or (self.op):
+            return  
+        self.do_sum()
+        self.current = float(eval(self.current))
         self.current = (self.total * (self.current/100))
         self.display(self.current)
 
 #Fonction pour changer les nombres en positifs et négatifs
     def sign(self):
         self.eq = False
-        self.total = eval(self.current)
-        text_box.configure(state="normal")
-        text_box.delete(0, END)
-        text_box.configure(state="disabled")
+        if (not self.current) or (self.op):
+            return 
+        self.calc_total()
+
+        self.flush_text_box()
         self.display(self.total * -1)
         #Vous devez écrire le code pour changer le signe du nombre entré.
 
@@ -128,8 +136,7 @@ tk = Tk()
 frame = Frame(tk)
 frame.pack()
 
-# tk = Tk()
-# tk.title("Calculator")
+tk.title("Calculator")
 calc = Calculator()
 
 #Déclaration du text_box (C'est important de l'appeller text_box)
@@ -192,9 +199,8 @@ bttn_pc = Button(frame, text = "%", height = 3, width = 5)
 bttn_pc["command"] = lambda: calc.calc_percent()
 bttn_pc.grid(row = 1, column = 2, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
-
 bttn_divide = Button(frame, text = "÷", height = 3, width = 5)
-bttn_divide["command"] = lambda: calc.operation('÷')
+bttn_divide["command"] = lambda: calc.operation('/')
 bttn_divide.grid(row = 1, column = 3, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 bttn_mul = Button(frame, text = "×", height = 3, width = 5)
@@ -214,7 +220,7 @@ bttn_dot["command"] = lambda: calc.num_press('.')
 bttn_dot.grid(row = 5, column = 2, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 bttn_eq = Button(frame, text = "=", height = 3, width = 5)
-bttn_eq["command"] = lambda: calc.operation('=')
+bttn_eq["command"] = lambda: calc.calc_total()
 bttn_eq.grid(row = 5, column = 3, columnspan = 1, pady = 1, sticky=N+S+E+W)
 
 tk.mainloop()

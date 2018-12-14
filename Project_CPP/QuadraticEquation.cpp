@@ -1,6 +1,8 @@
 #include<iostream>
 #include<stdlib.h>
 #include<cmath> 
+#include <string> 
+#include <sstream> 
 
 using namespace std;
 
@@ -46,6 +48,7 @@ int main()
 	int a, b, c;
     cout << "Enter the value of ' a ': ";
     cin >> a;
+
     cout << endl;
     cout << "Enter the value of ' b ': ";
     cin >> b;

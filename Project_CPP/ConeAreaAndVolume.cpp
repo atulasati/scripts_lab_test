@@ -1,8 +1,17 @@
 #include<iostream>
 #include<stdlib.h>
 #include<cmath> 
+#include <string> 
+#include <sstream> 
 
 using namespace std;
+
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
 
 double getConeSurfaceArea(double radius, double height)
 {
@@ -29,14 +38,40 @@ double getConeVolume(double radius, double height)
 
 int main()
 {
+    string inputNumber;
     double radius, height, surfaceArea, volume;
+    bool valid_number = false;
+
     cout << "This program calculates the area and volume of a cone" << endl;
     cout << "Enter the radius of the cone: ";
-    cin >> radius;
+    do{
+        cin >> inputNumber;
+        if (is_number(inputNumber) == 0){
+          cout << "Invalid Entry, enter valid entry!" << endl;
+          cout << "Enter the radius of the cone: ";
+          continue;
+        }
+        stringstream strToNum(inputNumber);
+        strToNum >> radius;      
+        valid_number = true;
+    }while(valid_number != true);
+    valid_number = false;
+
     cout << endl;
     
     cout << "Enter the height of the cone: ";
-    cin >> height;
+    do{
+        cin >> inputNumber;
+        if (is_number(inputNumber) == 0){
+          cout << "Invalid Entry, enter valid entry!" << endl;
+          cout << "Enter the height of the cone: ";
+          continue;
+        }
+        stringstream strToNum(inputNumber);
+        strToNum >> height;      
+        valid_number = true;
+    }while(valid_number != true);
+
     cout << endl;
     
     surfaceArea = getConeSurfaceArea(radius, height);

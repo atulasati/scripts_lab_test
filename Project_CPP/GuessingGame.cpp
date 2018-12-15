@@ -6,7 +6,7 @@
 
 using namespace std;
 
-bool is_number(const std::string& s)
+bool isNumber(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
     while (it != s.end() && std::isdigit(*it)) ++it;
@@ -26,7 +26,7 @@ void matchGuessNoWithRandomNumber()
     {
         noOfTries++;
         getline (cin, strGuessedNumber); 
-        if (is_number(strGuessedNumber) == 0){
+        if (isNumber(strGuessedNumber) == 0){
             cout<<"Invalid entry! Guess again: ";
             continue;
         }
@@ -54,15 +54,15 @@ int main()
 {
     // This program will create different sequence of  
     // random numbers on every program run  
-  
+
     // Use current time as seed for random generator 
     srand(time(0));
-    
+
     cout << "Game-Guess my number Version 1.0" << endl;
     cout << "==================================" << endl;
-    
+
     matchGuessNoWithRandomNumber();
     getchar();
-    
+
     return 0;
 }

@@ -6,11 +6,14 @@
 
 using namespace std;
 
-bool is_number(const std::string& s)
+bool isNumber(string& s)
 {
+    std::stringstream sstr(s);
+    float f;
+
     std::string::const_iterator it = s.begin();
     while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
+    return (!((sstr >> noskipws >> f).rdstate() ^ ios_base::eofbit) || (!s.empty() && it == s.end()));
 }
 
 double getConeSurfaceArea(double radius, double height)
@@ -31,7 +34,7 @@ double getConeVolume(double radius, double height)
     {
         volume = (1.0/3) * 3.14 * radius * radius * height;       
     }
-    
+
     return volume;
 }
 
@@ -46,10 +49,10 @@ int main()
     cout << "Enter the radius of the cone: ";
     do{
         cin >> inputNumber;
-        if (is_number(inputNumber) == 0){
-          cout << "Invalid Entry, enter valid entry!" << endl;
-          cout << "Enter the radius of the cone: ";
-          continue;
+        if (isNumber(inputNumber) == 0){
+            cout << "Invalid Entry, enter valid entry!" << endl;
+            cout << "Enter the radius of the cone: ";
+            continue;
         }
         stringstream strToNum(inputNumber);
         strToNum >> radius;      
@@ -58,14 +61,14 @@ int main()
     valid_number = false;
 
     cout << endl;
-    
+
     cout << "Enter the height of the cone: ";
     do{
         cin >> inputNumber;
-        if (is_number(inputNumber) == 0){
-          cout << "Invalid Entry, enter valid entry!" << endl;
-          cout << "Enter the height of the cone: ";
-          continue;
+        if (isNumber(inputNumber) == 0){
+            cout << "Invalid Entry, enter valid entry!" << endl;
+            cout << "Enter the height of the cone: ";
+            continue;
         }
         stringstream strToNum(inputNumber);
         strToNum >> height;      
@@ -73,12 +76,12 @@ int main()
     }while(valid_number != true);
 
     cout << endl;
-    
+
     surfaceArea = getConeSurfaceArea(radius, height);
     volume = getConeVolume(radius, height);
-    
+
     cout << "The total area of the cone is: " << surfaceArea << endl;
     cout << "The volume of the cone is: " << volume << endl;
-    
+
     return 0;
 }

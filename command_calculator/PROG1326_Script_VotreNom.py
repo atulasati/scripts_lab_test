@@ -16,9 +16,11 @@ def display_options():
 		7 - Clear list
 		8 - Exit""")
 
+command = None
 while True:
-	display_options()
-	command = input("Command: ")
+	if not command:
+		display_options()
+		command = input("Command: ")
 
 	if command == "1":
 		if calc.number_list:
@@ -26,6 +28,7 @@ while True:
 			print ("The result of the Addition is %s" %calc.total)
 		else:
 			print ("Your list is empty!")
+		command = None
 
 	elif command == "2":
 		if calc.number_list:
@@ -47,6 +50,7 @@ while True:
 				print ("Can not divide by 0!")
 		else:
 			print ("Your list is empty!")
+		command = None
 
 	elif command == "3":
 		if calc.number_list:
@@ -54,27 +58,31 @@ while True:
 			print ("The result of the Multiplication is %s" %calc.total)
 		else:
 			print ("Your list is empty!")
+		command = None
 
 	elif command == "4":
 		if calc.number_list:
 			print ("The last total was: %s" %calc.total)
 		else:
 			print ("Your list is empty!")
+		command = None
 	elif command == "5":
 		calc.inputNumbers()
+		command = None
 	elif command == "6":
 		if calc.number_list:
 			print("Here is your list %s" %calc.number_list)
 		else:
 			print ("Your list is empty!")
+		command = None
 	elif command == "7":
 		calc.number_list = []
 		calc.total = 0.0
 		print("The list is now empty!")
+		command = None
 	elif command == "8":
 		break
 	else:
-		print ("Invalid Command")
-		break
+		command = input ("Invalid Command. Try again: ")
 
 
